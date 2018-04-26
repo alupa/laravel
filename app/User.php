@@ -18,6 +18,8 @@ class User extends Authenticatable
         'name', 'email', 'password',
     ];
 
+    // OR protected $guarded = ['is_admin'];
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -25,6 +27,10 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password', 'remember_token',
+    ];
+
+    protected $casts = [
+        'is_admin' => 'boolean'
     ];
 
     public static function findByEmail($email){
