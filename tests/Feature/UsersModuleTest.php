@@ -3,14 +3,33 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use App\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+
 class UsersModuleTest extends TestCase
 {
+    /* Incluye el trait RefreshDatabase en cada una de las pruebas que vaya a interactuar con 
+    la base de datos. De esta manera, Laravel ejecutará las migraciones de la base de datos antes 
+    de ejecutar las pruebas. Además ejecutará cada prueba dentro de una transacción de la 
+    base de datos que será revertida después de ejecutar cada método de prueba. 
+    De esta forma evitamos tener que migrar manualmente la base de datos y preocuparnos por datos 
+    que podrían “contaminar” el estado de cada una de nuestras pruebas. */
+    use RefreshDatabase; 
+
     /** @test */
     function it_shows_the_users_list()
     {
+        factory(User::class)->create([
+            'name' => 'Gerardo',
+        ]);
+
+        factory(User::class)->create([
+            'name' => 'Mario',
+        ]);
+
         $this->get('/usuarios')
              ->assertStatus(200)
              ->assertSee('Listado de usuarios')
@@ -21,7 +40,9 @@ class UsersModuleTest extends TestCase
     /** @test */
     function it_shows_a_default_message_if_the_users_list_is_empty()
     {
-        $this->get('/usuarios?empty')
+        //DB::table('users')->truncate();
+
+        $this->get('/usuarios')
              ->assertStatus(200)
              ->assertSee('No hay usuarios registrados');
     }
