@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
+    protected $table = 'users'; //para especificar nombre de la tabla en caso de no seguir la conversion que utiliza laravel
     use Notifiable;
 
     /**

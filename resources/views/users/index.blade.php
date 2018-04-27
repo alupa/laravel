@@ -8,7 +8,7 @@
     @if (!empty($users)) 
         <ul>
             @foreach($users as $user)
-                <li>{{ $user }}</li>
+                <li>{{ $user->name }}, ({{$user->email }})</li>
             @endforeach
         </ul>
             @else
@@ -17,7 +17,7 @@
             <!-- Tambien puedes reemplazar el bloque de codigo anterior por esto
                 <ul>
                     @forelse ($users as $user)
-                        <li>{{ $user }}</li>
+                        <li>{{ $user->name }}</li>
                     @empty
                         <li>No hay usuarios registrados.</li>
                     @endforelse
