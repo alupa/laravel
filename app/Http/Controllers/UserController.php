@@ -48,8 +48,10 @@ class UserController extends Controller
     }
 
     public function show($id){
-        $user = User::find($id);
-        
+        $user = User::findOrFail($id);
+        //if ($user == null){
+        //return response()->view('errors.404', [/*datos*/], 404);
+        //}
         return view('users.show', compact('user'));
     }
 
