@@ -13,14 +13,17 @@
                 <th scope="col">#</th>
                 <th scope="col">Nombre</th>
                 <th scope="col">Correo electrónico</th>
+                <th scope="col">Acciones</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($users as $user)
                 <tr>
-                    <th scope="row"><a href="usuarios/{{$user->id}}"> {{ $user->id }}</a></th>
+                    <th scope="row">{{ $user->id }}</th>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
+                    <td><a href="{{ route('users.show', ['id' => $user->id]) }}">Ver detalles</a></td>
+                    <!-- OR url("usuarios/{$user->id}") OR action('UserController@show', ['id' => $user->id]) -->
                 </tr>
             @empty
                 <p>No hay usuarios registrados.</p>
