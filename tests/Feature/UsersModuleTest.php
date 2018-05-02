@@ -48,7 +48,7 @@ class UsersModuleTest extends TestCase
     }
 
     /** @test */
-    function it_loads_the_users_details(){
+    function it_displays_the_users_details(){
 
         $user = factory(User::class)->create([
             'name' => 'Alvaro Lupa'
@@ -194,5 +194,24 @@ class UsersModuleTest extends TestCase
             ->assertViewHas('user', function($viewUser) use ($user){
                 return $viewUser->id === $user->id;
             });
+    }
+
+    /** @test */
+    function it_updates_a_user(){
+        $user = factory(User::class)->create();
+
+        $this->withoutExceptionHandling();
+
+        $this->put("/usuarios/{$user->id}", [
+            'name' => 'Alvaro',
+            'email' => 'alvaro.lupa@gmail.com',
+            'password' => '123456'
+        ])->assertRedirect("/usuarios/{$user->id}"); // OR assertRedirect(route('users.index'))
+
+        $this->assertCredentials([
+            'name' => 'Alvaro',
+            'email' => 'alvaro.lupa@gmail.com',
+            'password' => '123456'
+        ]);
     }
 }
