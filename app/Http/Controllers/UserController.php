@@ -69,6 +69,8 @@ class UserController extends Controller
             ]);
         }*/
 
+        //return redirect('usuarios/nuevo')->withInput(); //se encarga de regresar los datos ingresado en el form en caso de errores automaticamente
+
         $data = request()->validate([
             'name' => 'required'
         ], [
