@@ -25,6 +25,9 @@ Route::get('/usuarios/{user}', 'UserController@show')
 Route::get('/usuarios/nuevo', 'UserController@create')
     ->name('users.create');
 
+Route::get('/usuarios/{user}/editar', 'UserController@edit')
+    ->name('users.edit');
+
 Route::post('/usuarios', 'UserController@store');
 
 Route::get('/saludo/{name}/{nickname?}', 'WelcomeUserController'); //Solo y solo si tiene un unico metodo a invocar
