@@ -115,4 +115,69 @@ class UsersModuleTest extends TestCase
         ]);
         // OR $this->assertEquals(0, User::count());
     }
+
+    /** @test */
+    function the_email_is_required(){
+        $this->from('usuarios/nuevo')
+            ->post('/usuarios/', [
+                'name' => 'Alvaro',
+                'email' => '',
+                'password' => '123456'
+            ])->assertRedirect('usuarios/nuevo')
+            ->assertSessionHasErrors(['email']);
+
+        $this->assertDatabaseMissing('users', [
+            'email' => 'alvaro.lupa@gmail.com',
+        ]);
+    }
+
+    /** @test */
+    function the_email_must_be_valid(){
+        $this->from('usuarios/nuevo')
+            ->post('/usuarios/', [
+                'name' => 'Alvaro',
+                'email' => 'correo-no-valido',
+                'password' => '123456'
+            ])->assertRedirect('usuarios/nuevo')
+            ->assertSessionHasErrors(['email']);
+
+        $this->assertDatabaseMissing('users', [
+            'email' => 'alvaro.lupa@gmail.com',
+        ]);
+    }
+
+    /** @test */
+    function the_email_must_be_unique(){
+        //$this->withoutExceptionHandling();
+
+        factory(User::class)->create([
+            'email' => 'alvaro.lupa@gmail.com'
+        ]);
+
+        $this->from('usuarios/nuevo')
+            ->post('/usuarios/', [
+                'name' => 'Alvaro',
+                'email' => 'alvaro.lupa@gmail.com',
+                'password' => '123456'
+            ])->assertRedirect('usuarios/nuevo')
+            ->assertSessionHasErrors(['email']);
+
+            $this->assertEquals(1, User::count());
+    }
+
+    /** @test */
+    function the_password_is_required(){
+        $this->from('usuarios/nuevo')
+            ->post('/usuarios/', [
+                'name' => 'Alvaro',
+                'email' => 'alvaro.lupa@gmail.com',
+                'password' => ''
+            ])->assertRedirect('usuarios/nuevo')
+            ->assertSessionHasErrors(['password']);
+
+        $this->assertDatabaseMissing('users', [
+            'email' => 'alvaro.lupa@gmail.com',
+        ]);
+        // OR $this->assertEquals(0, User::count());
+    }
 }

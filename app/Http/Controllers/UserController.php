@@ -72,9 +72,17 @@ class UserController extends Controller
         //return redirect('usuarios/nuevo')->withInput(); //se encarga de regresar los datos ingresado en el form en caso de errores automaticamente
 
         $data = request()->validate([
-            'name' => 'required'
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email', // OR ['required', 'email'],
+            'password' => 'required|alpha_num|between:6,14'
         ], [
-            'name.required' => 'El campo nombre es obligatorio' 
+            'name.required' => 'El campo nombre es obligatorio',
+            'email.required' => 'El campo email es obligatorio',
+            'email.email' => 'El correo debe tener un formato adecuado: sucorreo@example.com',
+            'email.unique' => 'El correo suministrado ya existe',
+            'password.required' => 'El campo password es obligatorio',
+            'password.alpha_num' => 'El password debe tener solo numero alphanumericos',
+            'password.between' => 'El password debe tener entre 6 a 14 caracteres',
         ]);
 
         User::create([
