@@ -214,4 +214,100 @@ class UsersModuleTest extends TestCase
             'password' => '123456'
         ]);
     }
+    
+    /** @test */
+    function the_name_is_required_when_updating_a_user(){
+        $user = factory(User::class)->create();
+
+        //$this->withoutExceptionHandling();
+
+        $this->from("/usuarios/{$user->id}/editar")
+            ->put("/usuarios/{$user->id}", [
+                'name' => '',
+                'email' => 'alvaro.lupa@gmail.com',
+                'password' => '123456'
+            ])
+            ->assertRedirect("/usuarios/{$user->id}/editar")
+            ->assertSessionHasErrors(['name']);
+
+        $this->assertDatabaseMissing('users', ['email' => 'alvaro.lupa@gmail.com']);
+    }
+
+    /** @test */
+    function the_email_is_required_when_updating_a_user(){
+        $user = factory(User::class)->create();
+
+        //$this->withoutExceptionHandling();
+
+        $this->from("/usuarios/{$user->id}/editar")
+            ->put("/usuarios/{$user->id}", [
+                'name' => 'Alvaro',
+                'email' => '',
+                'password' => '123456'
+            ])
+            ->assertRedirect("/usuarios/{$user->id}/editar")
+            ->assertSessionHasErrors(['email']);
+
+        $this->assertDatabaseMissing('users', [
+            'name' => 'Alvaro',
+        ]);
+    }
+
+    /** @test */
+    function the_email_must_be_valid_when_updating_a_user(){
+        $user = factory(User::class)->create();
+
+        //$this->withoutExceptionHandling();
+
+        $this->from("/usuarios/{$user->id}/editar")
+            ->put("/usuarios/{$user->id}", [
+                'name' => 'Alvaro',
+                'email' => 'correo-no-valido',
+                'password' => '123456'
+            ])
+            ->assertRedirect("/usuarios/{$user->id}/editar")
+            ->assertSessionHasErrors(['email']);
+
+        $this->assertDatabaseMissing('users', ['name' => 'Alvaro']);
+    }
+
+    /** @test */
+    function the_email_must_be_unique_when_updating_a_user(){
+        self::markTestIncomplete();
+        return;
+        //$this->withoutExceptionHandling();
+
+        $user = factory(User::class)->create([
+            'email' => 'alvaro.lupa@gmail.com'
+        ]);
+
+        $this->from("usuarios/{$user->id}/editar")
+            ->put("/usuarios/{$user->id}", [
+                'name' => 'Alvaro',
+                'email' => 'alvaro.lupa@gmail.com',
+                'password' => '123456'
+            ])->assertRedirect('usuarios/nuevo')
+            ->assertSessionHasErrors(['email']);
+
+            $this->assertEquals(1, User::count());
+    }
+
+    /** @test */
+    function the_password_is_required_when_updating_a_user(){
+        //$this->withoutExceptionHandling();
+
+        $user = factory(User::class)->create();
+
+        $this->from("usuarios/{$user->id}/editar")
+            ->put("/usuarios/{$user->id}", [
+                'name' => 'Alvaro',
+                'email' => 'alvaro.lupa@gmail.com',
+                'password' => ''
+            ])->assertRedirect("usuarios/{$user->id}/editar")
+            ->assertSessionHasErrors(['password']);
+
+        $this->assertDatabaseMissing('users', [
+            'email' => 'alvaro.lupa@gmail.com',
+        ]);
+    }
 }
