@@ -101,10 +101,14 @@ class UserController extends Controller
     public function update(User $user){
         $data = request()->validate([
             'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required'
+            'email' => 'required|email|unique:users,email,'.$user->id, //OR ['required', 'email', Rule::unique('users')->ignore($user->id)]
+            'password' => 'nullable|alpha_num|between:6,14'
         ]);
-        $data['password'] = bcrypt($data['password']);
+        if ($data['password'] != null)
+            $data['password'] = bcrypt($data['password']);
+        else
+            unset($data['password']);
+            
         $user->update($data);
         return redirect()->route('users.show', compact('user'));
     }

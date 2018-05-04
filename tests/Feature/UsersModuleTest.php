@@ -273,8 +273,52 @@ class UsersModuleTest extends TestCase
 
     /** @test */
     function the_email_must_be_unique_when_updating_a_user(){
-        self::markTestIncomplete();
-        return;
+       
+        $randomUser = factory(User::class)->create([
+            'email' => 'existing-email@example.com'
+        ]);
+        //$this->withoutExceptionHandling();
+
+        factory(User::class)->create([
+            'email' => 'alvaro.lupa@gmail.com'
+        ]);
+
+        $this->from("usuarios/{$user->id}/editar")
+            ->put("/usuarios/{$user->id}", [
+                'name' => 'Alvaro',
+                'email' => 'existing-email@example.com',
+                'password' => '123456'
+            ])->assertRedirect("usuarios/{$user->id}/editar")
+            ->assertSessionHasErrors(['email']);
+
+            
+    }
+
+    /** @test */
+    function the_password_is_optional_when_updating_a_user(){
+        //$this->withoutExceptionHandling();
+        $oldPassword = 'CLAVE_ANTERIOR';
+
+        $user = factory(User::class)->create([
+            'password' => bcrypt($oldPassword)
+        ]);
+
+        $this->from("usuarios/{$user->id}/editar")
+            ->put("/usuarios/{$user->id}", [
+                'name' => 'Alvaro',
+                'email' => 'alvaro.lupa@gmail.com',
+                'password' => ''
+            ])->assertRedirect("usuarios/{$user->id}"); //users.show
+
+        $this->assertCredentials([
+            'name' => 'Alvaro',
+            'email' => 'alvaro.lupa@gmail.com',
+            'password' => $oldPassword
+        ]);
+    }
+
+    /** @test */
+    function the_user_email_can_stay_the_same_when_updating_a_user(){
         //$this->withoutExceptionHandling();
 
         $user = factory(User::class)->create([
@@ -283,31 +327,14 @@ class UsersModuleTest extends TestCase
 
         $this->from("usuarios/{$user->id}/editar")
             ->put("/usuarios/{$user->id}", [
-                'name' => 'Alvaro',
+                'name' => 'Alvaro Lupa',
                 'email' => 'alvaro.lupa@gmail.com',
                 'password' => '123456'
-            ])->assertRedirect('usuarios/nuevo')
-            ->assertSessionHasErrors(['email']);
+            ])->assertRedirect("usuarios/{$user->id}"); //users.show
 
-            $this->assertEquals(1, User::count());
-    }
-
-    /** @test */
-    function the_password_is_required_when_updating_a_user(){
-        //$this->withoutExceptionHandling();
-
-        $user = factory(User::class)->create();
-
-        $this->from("usuarios/{$user->id}/editar")
-            ->put("/usuarios/{$user->id}", [
-                'name' => 'Alvaro',
-                'email' => 'alvaro.lupa@gmail.com',
-                'password' => ''
-            ])->assertRedirect("usuarios/{$user->id}/editar")
-            ->assertSessionHasErrors(['password']);
-
-        $this->assertDatabaseMissing('users', [
-            'email' => 'alvaro.lupa@gmail.com',
+        $this->assertDatabaseHas('users', [
+            'name' => 'Alvaro Lupa',
+            'email' => 'alvaro.lupa@gmail.com'
         ]);
     }
 }
