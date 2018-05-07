@@ -279,7 +279,7 @@ class UsersModuleTest extends TestCase
         ]);
         //$this->withoutExceptionHandling();
 
-        factory(User::class)->create([
+        $user = factory(User::class)->create([
             'email' => 'alvaro.lupa@gmail.com'
         ]);
 

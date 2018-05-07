@@ -34,4 +34,5 @@ Route::put('usuarios/{user}', 'UserController@update');
 
 Route::get('/saludo/{name}/{nickname?}', 'WelcomeUserController'); //Solo y solo si tiene un unico metodo a invocar
 
-Route::delete('usuarios/{user}', 'UserController@destroy');
+Route::delete('usuarios/{user}', 'UserController@destroy')
+    ->name('users.destroy');

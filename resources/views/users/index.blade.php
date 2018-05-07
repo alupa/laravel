@@ -2,6 +2,7 @@
 
 @section('content')
     <h1>{{ $title }}</h1>
+    <a href="{{ route('users.create') }}">Nuevo usuario</a>
     <hr>
 
     <!-- en remplazo de @if (!empty($users)) @endif tambien puedes usar 
@@ -22,8 +23,15 @@
                     <th scope="row">{{ $user->id }}</th>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
-                    <td><a href="{{ route('users.show', ['id' => $user->id]) }}">Ver detalles</a></td>
+                    <td><a href="{{ route('users.show', $user) }}">Ver detalles</a> |
                     <!-- OR url("usuarios/{$user->id}") OR action('UserController@show', ['id' => $user->id]) -->
+                        <a href="{{ route('users.edit', $user) }}">Editar</a>
+                    <form action="{{ route('users.destroy', $user) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit">Eliminar</button>
+                    </form>
+                    </td>
                 </tr>
             @empty
                 <p>No hay usuarios registrados.</p>
